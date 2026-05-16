@@ -1,5 +1,10 @@
 package com.example.session_3.model.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ApiResponse<T> {
     private boolean success;
     private String message;
@@ -10,7 +15,6 @@ public class ApiResponse<T> {
         this.message = message;
         this.data = data;
     }
-
 
 }
 

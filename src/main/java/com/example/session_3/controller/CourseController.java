@@ -4,6 +4,7 @@ import com.example.session_3.model.dto.ApiResponse;
 import com.example.session_3.model.entity.Course;
 import com.example.session_3.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,20 +18,47 @@ public class CourseController {
         this.courseService = courseService;
     }
     @GetMapping
-    public ApiResponse<List<Course>> getAllCourses(){
-        return new ApiResponse<>(true, "Success", courseService.getAllCourse());
+    public ResponseEntity<ApiResponse<List<Course>>>  getAllCourses(){
+        try{
+            return ResponseEntity.ok(new ApiResponse<>(true, "Success", courseService.getAllCourse()));
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(new ApiResponse<>(false, "Error: " + e.getMessage(), null));
+        }
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<Course>> getCourseById(@PathVariable long id){
+        try {
+            Course course = courseService.getCourseById(id);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Course found", course));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(new ApiResponse<>(false, "Error: " + e.getMessage(), null));
+        }
     }
     @PostMapping
-    public ApiResponse<Course> createCourse(@RequestBody Course course){
-        return new ApiResponse<>(true, "Course created successfully", courseService.createCourse(course));
+    public ResponseEntity<ApiResponse<Course>> createCourse(@RequestBody Course course){
+        try {
+            Course createdCourse = courseService.createCourse(course);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Course created successfully", createdCourse));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(false, "Error: " + e.getMessage(), null));
+        }
     }
     @PutMapping("/{id}")
-    public ApiResponse<Course> updateCourse(@PathVariable long id, @RequestBody Course course) {
-        return new ApiResponse<>(true, "Course updated successfully", courseService.updateCourse(id, course));
+    public ResponseEntity<ApiResponse<Course>> updateCourse(@PathVariable long id, @RequestBody Course course) {
+        try {
+            Course updatedCourse = courseService.updateCourse(id, course);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Course updated successfully", updatedCourse));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(false, "Error: " + e.getMessage(), null));
+        }
     }
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteCourse(@PathVariable long id) {
-        courseService.deleteCourse(id);
-        return new ApiResponse<>(true, "Course deleted successfully", null);
+    public ResponseEntity<ApiResponse<Void>> deleteCourse(@PathVariable long id) {
+        try {
+            courseService.deleteCourse(id);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Course deleted successfully", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponse<>(false, "Error: " + e.getMessage(), null));
+        }
     }
 }
